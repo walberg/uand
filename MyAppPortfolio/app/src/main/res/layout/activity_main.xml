@@ -15,7 +15,7 @@
         android:text="My Nanodegree Apps!"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textSize="@dimen/abc_text_size_title_material"
+        android:textSize="20dp"
         android:textAlignment="center"
         android:id="@+id/textView" />
 
