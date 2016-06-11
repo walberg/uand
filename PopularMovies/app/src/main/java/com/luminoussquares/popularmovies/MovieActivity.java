@@ -10,39 +10,47 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.luminoussquares.popularmovies.json.Movie;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieActivity extends AppCompatActivity {
+    @BindView(R.id.movieTitle) TextView movieTitle;
+    @BindView(R.id.movieReleaseDate)TextView movieReleaseDate;
+    @BindView(R.id.movieSynopsis)TextView movieSynopsis;
+    @BindView(R.id.movieUserRating)TextView movieUserRating;
+    @BindView(R.id.moviePoster)ImageView moviePoster;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_movie);
+        ButterKnife.bind(this);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        TextView movieTitle = (TextView)findViewById(R.id.movieTitle);
-        TextView movieReleaseDate = (TextView)findViewById(R.id.movieReleaseDate);
-        TextView movieSynopsis = (TextView)findViewById(R.id.movieSynopsis);
-        TextView movieUserRating = (TextView)findViewById(R.id.movieUserRating);
-        ImageView moviePoster = (ImageView)findViewById(R.id.moviePoster);
-
         Intent movieIntent = getIntent();
-        if(movieIntent.getBundleExtra("movie") != null) {
-            Bundle bundle = movieIntent.getBundleExtra("movie");
-            movieTitle.setText(bundle.getString("original_title"));
-            movieReleaseDate.setText(bundle.getString("release_date").substring(0, 4));
-            movieUserRating.setText(String.format("%s/10", bundle.getString("vote_average")));
-            movieSynopsis.setText(bundle.getString("overview"));
-            movieTitle.setText(bundle.getString("original_title"));
-            Picasso.with(this).load(new StringBuilder()
-                    .append(DiscoveryActivity.imageBaseUrl)
-                    .append(DiscoveryActivity.imageSizeUrl)
-                    .append(bundle.getString("poster_path")).toString()).into(moviePoster);
+        Movie movie = movieIntent.getParcelableExtra("movie");
+        if(movie != null) {
+            movieTitle.setText(movie.original_title);
+            movieReleaseDate.setText(movie.release_date.substring(0, 4));
+            movieUserRating.setText(String.format("%s/10", movie.vote_average));
+            movieSynopsis.setText(movie.overview);
+            movieTitle.setText(movie.original_title);
+            Picasso.with(this)
+                    .load(new StringBuilder()
+                            .append(DiscoveryActivity.imageBaseUrl)
+                            .append(DiscoveryActivity.imageSizeUrl)
+                            .append(movie.poster_path)
+                            .toString())
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder_error)
+                    .into(moviePoster);
         } else {
             Log.e(DiscoveryActivity.TAG, "No intent");
         }
